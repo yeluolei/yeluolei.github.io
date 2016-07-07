@@ -16,7 +16,7 @@ Test
   ```
 3. 新建podspec文件，这里你可以自己手动新建，也可以使用cocoapods提供的命令来新建一个模板，再手动修改
      
- ```
+ ```bash
  pod spec create Test
  ```
  新建完成后的文件路径如下
@@ -30,7 +30,7 @@ Test
  ```
  修改`Test.podspec`文件，然后将此文件转为json文件（我也不知道为什么需要转成json文件，但是cocoapods的官方库里的spec文件都已经转成了json）， 转成json文件的命令可以通过cocoapods的一个命令完成：
  
- ```
+ ```bash
  pod ipc spec Test.podspec
  ```
  最后的结果如下
@@ -88,7 +88,7 @@ Test
  
 4. 将上面的文件全部放入git内，由于是测试使用，所以不需要将git push到远程服务器也可以
 
- ```
+ ```bash
  git init
  git add -A
  git commit -am 'init'
@@ -96,7 +96,7 @@ Test
 
 5. 验证缩写的Test.podsspec.json文件是正确的,这里可以使用cocoapods官方提供的验证命令
 
- ```
+ ```bash
  pod spec lint --verbose
  ```
 
@@ -105,7 +105,7 @@ Test
  *  新建一个xcode项目
  *  在项目文件夹新建一个Podfile文件,内容如下
  
-       ```
+       ```bash
        platform :ios, '9.0'
        target 'SampleProject' do
          pod 'Test',:path => '../Test/Test.podspec.json'
@@ -113,18 +113,17 @@ Test
        ```
  *  运行 `pod install` 命令
  *  打开xcode项目，可以看到我们的静态库和头文件已经被引入到项目内
- 
     {% asset_img "1.png" "xcode 项目" %}
-  
+7. 上传到cocoapods（注意需要先把git改为真实的git才可以），这里要注意cocoapods现在需要先注册才能使用
 
-7. 上传到cocoapods，这里要注意cocoapods现在需要先注册才能使用
-
- ```
+ ```bash
  pod trunk register 你的邮箱 '用户名' --description='简单描述'
  ```
 
 8. 完成邮箱验证后既可以把自己的代码库push到trunk上
 
- ```
+ ```bash
  pod trunk push Test.podsspec.json
- ``` 
+ ```
+
+至此，一个全新的cocoapods部署完成啦，回过头来看看还是挺简单的。
