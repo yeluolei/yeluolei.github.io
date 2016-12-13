@@ -71,6 +71,8 @@ pagination_dir: page
 ## Themes: https://hexo.io/themes/
 theme: next
 
+#Baidu Analysis
+baidu_analytics: 17c584793215ab4b04a4581182492681
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
