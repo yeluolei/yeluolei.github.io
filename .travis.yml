@@ -1,19 +1,15 @@
-sudo: false
 language: node_js
 node_js:
-  - 10 # use nodejs v10 LTS
-cache: npm
+  - '10'
 branches:
   only:
-    - hexo-source # build hexo-source branch only
+  - hexo-source
+before_install:
+- git config --global user.name "yeluolei"
+- git config --global user.email "yeluolei@gmail.com"
+- sed -i'' "s~https://github.com/yeluolei/yeluolei.github.io.git~https://${GH_TOKEN}@github.com/yeluolei/yeluolei.github.io.git~" _config.yml
+install:
+- yarn global add hexo-cli
+- yarn install
 script:
-  - hexo generate # generate static files
-deploy:
-  provider: pages
-  skip-cleanup: true
-  github-token: $GH_TOKEN
-  keep-history: true
-  target_branch: master
-  on:
-    branch: master
-  local-dir: public
+- yarn run deploy

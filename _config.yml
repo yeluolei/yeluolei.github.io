@@ -77,5 +77,5 @@ baidu_analytics: 17c584793215ab4b04a4581182492681
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
     type: git
-    repository: http://github.com/yeluolei/yeluolei.github.io.git
+    repository: https://github.com/yeluolei/yeluolei.github.io.git
     branch: master
