@@ -113,7 +113,7 @@ Test
        ```
  *  运行 `pod install` 命令
  *  打开xcode项目，可以看到我们的静态库和头文件已经被引入到项目内
-    {% asset_img "1.png" "xcode 项目" %}
+    {% asset_img 1.png xcode 项目 %}
 7. 上传到cocoapods（注意需要先把git改为真实的git才可以），这里要注意cocoapods现在需要先注册才能使用
 
  ```bash
