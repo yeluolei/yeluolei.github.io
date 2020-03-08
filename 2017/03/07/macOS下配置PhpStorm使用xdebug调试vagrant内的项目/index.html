@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="1KS13XGfw9">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yeluolei.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="最近使用vagrant在macOS下进行PHP的开发，由于一直没法用xdebug调试，开发过程极其痛苦。折腾了半天终于折腾好了。记下步骤，免得下次再折腾。  在php运行环境内配置xdebug，我的vagrant环境是Ubuntu，故安装过程很简单 1sudo apt-get install php70-xdebug  安装后，打开xdebug配置文件,添加如下配置: 12345678zend_e">
+<meta property="og:type" content="article">
+<meta property="og:title" content="macOS下配置PhpStorm使用xdebug调试vagrant内的项目">
+<meta property="og:url" content="https://yeluolei.github.io/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/index.html">
+<meta property="og:site_name" content="YaLso">
+<meta property="og:description" content="最近使用vagrant在macOS下进行PHP的开发，由于一直没法用xdebug调试，开发过程极其痛苦。折腾了半天终于折腾好了。记下步骤，免得下次再折腾。  在php运行环境内配置xdebug，我的vagrant环境是Ubuntu，故安装过程很简单 1sudo apt-get install php70-xdebug  安装后，打开xdebug配置文件,添加如下配置: 12345678zend_e">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yeluolei.github.io/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/1.png">
+<meta property="og:image" content="https://yeluolei.github.io/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/2.png">
+<meta property="og:image" content="https://yeluolei.github.io/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/3.png">
+<meta property="og:image" content="https://yeluolei.github.io/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/4.png">
+<meta property="og:image" content="https://yeluolei.github.io/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/5.png">
+<meta property="og:image" content="https://yeluolei.github.io/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/6.png">
+<meta property="article:published_time" content="2017-03-07T05:26:58.000Z">
+<meta property="article:modified_time" content="2020-03-08T07:56:49.721Z">
+<meta property="article:author" content="Rurui Ye">
+<meta property="article:tag" content="hexo">
+<meta property="article:tag" content="javascript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yeluolei.github.io/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/1.png">
+
+<link rel="canonical" href="https://yeluolei.github.io/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>macOS下配置PhpStorm使用xdebug调试vagrant内的项目 | YaLso</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YaLso</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yeluolei.github.io/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rurui Ye">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YaLso">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          macOS下配置PhpStorm使用xdebug调试vagrant内的项目
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2017-03-07 13:26:58" itemprop="dateCreated datePublished" datetime="2017-03-07T13:26:58+08:00">2017-03-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-08 15:56:49" itemprop="dateModified" datetime="2020-03-08T15:56:49+08:00">2020-03-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近使用vagrant在macOS下进行PHP的开发，由于一直没法用xdebug调试，开发过程极其痛苦。折腾了半天终于折腾好了。记下步骤，免得下次再折腾。</p>
+<ol>
+<li>在php运行环境内配置xdebug，我的vagrant环境是Ubuntu，故安装过程很简单 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install php70-xdebug</span><br></pre></td></tr></table></figure>
+ 安装后，打开xdebug配置文件,添加如下配置: <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">zend_extension&#x3D;xdebug.so</span><br><span class="line">xdebug.remote_enable&#x3D;1</span><br><span class="line">xdebug.remote_port&#x3D;19000 #注意，这里的端口最好不要用默认的9000，因为macOS的安全限制还是什么的，9000无发访问。在这里折腾了好久</span><br><span class="line">xdebug.remote_start &#x3D;1	  </span><br><span class="line">xdebug.idekey&#x3D;&quot;vagrant&quot;  #使用和PhpStorm内配置相同的key即可</span><br><span class="line">xdebug.remote_autostart&#x3D;1</span><br><span class="line">xdebug.remote_connect_back&#x3D;1</span><br><span class="line">xdebug.remote_handler&#x3D;dbgp</span><br></pre></td></tr></table></figure></li>
+<li>在PhpStorm内配置PHP运行环境 <img src="/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/1.png" class="" title="添加Php运行环境">
+ <em>一定要选vagrant</em> <img src="/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/2.png" class="" title="选择vagrant"></li>
+<li>配置xdebug的监听端口，注意这里的端口要填写和<code>xdebug.ini</code>内一致的 <img src="/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/3.png" class="" title="配置xdebug监听"></li>
+<li>填写server配置，其中host和port填写网站的访问地址和端口，文件映射一定要配置正确 <img src="/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/4.png" class="" title="配置网站server"></li>
+<li>点击PhpStorm的右上角的下拉的调试配置，<code>Edit Configurations</code>,添加<code>Php Remote Debug</code>调试配置。其中<code>ide key</code>填写和xdebug的配置文件相同的，server选择上一步填写的 <img src="/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/5.png" class="" title="添加debug配置"></li>
+<li>点击右上角的电话按钮和debug按钮，添加断点，开始调试 <img src="/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/6.png" class="" title="添加断点并调试"></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/07/11/ARC%E4%B8%8B%E7%9A%84OC%E5%AF%B9%E8%B1%A1%E5%92%8CCF%E5%AF%B9%E8%B1%A1%E4%BD%BF%E7%94%A8/" rel="prev" title="ARC下的OC对象和CF对象使用">
+      <i class="fa fa-chevron-left"></i> ARC下的OC对象和CF对象使用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/03/21/gitbook%E5%A6%82%E4%BD%95%E6%8C%89%E5%8F%82%E6%95%B0%E7%BC%96%E8%AF%91%E5%86%85%E5%AE%B9/" rel="next" title="gitbook如何按参数编译内容">
+      gitbook如何按参数编译内容 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rurui Ye</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yeluolei" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yeluolei" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yeluolei@gmail.com" title="E-Mail → mailto:yeluolei@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-nd.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rurui Ye</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

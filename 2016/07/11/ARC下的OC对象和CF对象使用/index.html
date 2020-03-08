@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="baidu-site-verification" content="1KS13XGfw9">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yeluolei.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="在ARC下，iOS开发终于可以自动管理内存了。然而iOS内的Core Foundation对象仍然不能自动进行管理（如Core Graphics、Core Text等）。如果我们的程序需要访问CF对象是，仍然需要手动对其进行管理。当我们创建一个CF对象后，我们需要使用CFRelease对其进行手动释放操作。但是当CF和OC对象进行了转化的时候，又该如何管理呢？在这里OC提供了一下几个关键字对其进行">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ARC下的OC对象和CF对象使用">
+<meta property="og:url" content="https://yeluolei.github.io/2016/07/11/ARC%E4%B8%8B%E7%9A%84OC%E5%AF%B9%E8%B1%A1%E5%92%8CCF%E5%AF%B9%E8%B1%A1%E4%BD%BF%E7%94%A8/index.html">
+<meta property="og:site_name" content="YaLso">
+<meta property="og:description" content="在ARC下，iOS开发终于可以自动管理内存了。然而iOS内的Core Foundation对象仍然不能自动进行管理（如Core Graphics、Core Text等）。如果我们的程序需要访问CF对象是，仍然需要手动对其进行管理。当我们创建一个CF对象后，我们需要使用CFRelease对其进行手动释放操作。但是当CF和OC对象进行了转化的时候，又该如何管理呢？在这里OC提供了一下几个关键字对其进行">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2016-07-11T09:30:57.000Z">
+<meta property="article:modified_time" content="2020-03-08T07:17:51.937Z">
+<meta property="article:author" content="Rurui Ye">
+<meta property="article:tag" content="ios">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://yeluolei.github.io/2016/07/11/ARC%E4%B8%8B%E7%9A%84OC%E5%AF%B9%E8%B1%A1%E5%92%8CCF%E5%AF%B9%E8%B1%A1%E4%BD%BF%E7%94%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true
+  };
+</script>
+
+  <title>ARC下的OC对象和CF对象使用 | YaLso</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">YaLso</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://yeluolei.github.io/2016/07/11/ARC%E4%B8%8B%E7%9A%84OC%E5%AF%B9%E8%B1%A1%E5%92%8CCF%E5%AF%B9%E8%B1%A1%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rurui Ye">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="YaLso">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ARC下的OC对象和CF对象使用
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2016-07-11 17:30:57" itemprop="dateCreated datePublished" datetime="2016-07-11T17:30:57+08:00">2016-07-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-03-08 15:17:51" itemprop="dateModified" datetime="2020-03-08T15:17:51+08:00">2020-03-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在ARC下，iOS开发终于可以自动管理内存了。然而iOS内的Core Foundation对象仍然不能自动进行管理（如Core Graphics、Core Text等）。如果我们的程序需要访问CF对象是，仍然需要手动对其进行管理。当我们创建一个CF对象后，我们需要使用<code>CFRelease</code>对其进行手动释放操作。但是当CF和OC对象进行了转化的时候，又该如何管理呢？在这里OC提供了一下几个关键字对其进行操作。</p>
+<ol>
+<li><p><code>__bridge</code>：CF和OC对象进行转化的时候只涉及对象类型转换，而不涉及对象所有权的额转换</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSURL</span> *url = [[<span class="built_in">NSURL</span> alloc] initWithString:<span class="string">@"http://www.baidu.com"</span>];</span><br><span class="line"><span class="built_in">CFURLRef</span> ref = (<span class="built_in">CFURLRef</span>)url;</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码在ARC下需要改成如下：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSURL</span> *url = [[<span class="built_in">NSURL</span> alloc] initWithString:<span class="string">@"http://www.baidu.com"</span>];</span><br><span class="line"><span class="built_in">CFURLRef</span> ref = (__bridge <span class="built_in">CFURLRef</span>)url;</span><br></pre></td></tr></table></figure>
+
+<p>由于<code>url</code>是OC创建的对象，并且在转换的过程中并不涉及对象所有权的转换，也就是说这个对象仍然会在OC中被释放，所以不需要调用<code>CFRelease</code>。</p>
+<p>同理，如果一个对象在CF中创建，并用<code>__bridge</code>在OC中使用，则需要使用<code>CFRelease</code>进行释放操作。</p>
+</li>
+<li><p><code>__bridge_transfer</code>: CF对象转换成OC对象时，将CF对象的所有权交给OC对象，此时ARC就能自动管理该内存（作用同<code>CFBridgingRelease()</code>)</p>
+</li>
+<li><p><code>__bridge_retained</code>:与<code>__bridge_transfer</code>相反，常用在将OC对象转换成CF对象时，将OC对象的所有权交给CF对象来管理(作用同CFBridgingRetain())</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSURL</span> *url = [[<span class="built_in">NSURL</span> alloc] initWithString:<span class="string">@"http://www.baidu.com"</span>];</span><br><span class="line"><span class="built_in">CFURLRef</span> ref = (__bridge_retained <span class="built_in">CFURLRef</span>)url;</span><br><span class="line"><span class="built_in">CFRelease</span>(ref);</span><br></pre></td></tr></table></figure>
+
+<p>当使用<code>_bridge_retained</code>标识符以后，代表OC要将对象所有权交给CF对象自己来管理,所以我们要在ref使用完成以后用CFRelease将其手动释放.</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">CFStringRef</span> cfstring = <span class="built_in">CFURLCreateStringByAddingPercentEscapes</span>(<span class="literal">NULL</span>,(__bridge <span class="built_in">CFStringRef</span>)text, <span class="literal">NULL</span>, <span class="built_in">CFSTR</span>(<span class="string">"!*’();:@&amp;=+\$,/?%#[]"</span>), <span class="built_in">CFStringConvertNSStringEncodingToEncoding</span>(<span class="built_in">NSUTF8StringEncoding</span>));</span><br><span class="line"><span class="built_in">NSString</span> *ocString = (__bridge_transfer <span class="built_in">CFStringRef</span>)cfString;</span><br></pre></td></tr></table></figure>
+
+<p>此时OC即获得了对象的所有权，ARC负责自动释放该对象，如果我们在结尾加上CFRelease(cfString)纯属画蛇添足，虽不会崩溃，但是控制台会打印出该对象被free了两次。</p>
+</li>
+</ol>
+<p>文章来源：<a href="http://www.cnblogs.com/zzltjnh/p/3885012.html" target="_blank" rel="noopener">请尊重作者</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ios/" rel="tag"># ios</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2016/07/07/%E4%BD%BF%E7%94%A8cocoapods%E5%90%91%E7%AC%AC%E4%B8%89%E6%96%B9%E6%8F%90%E4%BE%9B%E9%9D%99%E6%80%81%E5%BA%93/" rel="prev" title="使用cocoapods向第三方提供静态库">
+      <i class="fa fa-chevron-left"></i> 使用cocoapods向第三方提供静态库
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2017/03/07/macOS%E4%B8%8B%E9%85%8D%E7%BD%AEPhpStorm%E4%BD%BF%E7%94%A8xdebug%E8%B0%83%E8%AF%95vagrant%E5%86%85%E7%9A%84%E9%A1%B9%E7%9B%AE/" rel="next" title="macOS下配置PhpStorm使用xdebug调试vagrant内的项目">
+      macOS下配置PhpStorm使用xdebug调试vagrant内的项目 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rurui Ye</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yeluolei" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yeluolei" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:yeluolei@gmail.com" title="E-Mail → mailto:yeluolei@gmail.com" rel="noopener" target="_blank"><i class="fa fa-fw fa-envelope"></i></a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-nd/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-nd.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rurui Ye</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.2
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
