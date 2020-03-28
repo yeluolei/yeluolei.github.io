@@ -21,20 +21,20 @@
     var CONFIG = {"hostname":"yeluolei.github.io","root":"/","scheme":"Gemini","version":"7.7.2","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="如今网卡更新的速度已经超过操作系统的更新速度了，特别是开源操作系统，默认的网卡驱动动不动就跟不上新的主板，导致新的电脑无法识别到网卡，特别闹心。比如最近配置的Z390 Phantom Gaming SLI&#x2F;ac这个主板，在ubuntu 18.04上，就是安装了ubuntu-18.04-hwe-generic，也没有找到对应的驱动程序，这个时候就需要手动安装了。在官网上下载好对应的驱动,注意我们是2">
+  <meta name="description" content="在日常工作中，需要对抓包后的数据在调试时重放。由于UDP头限定等问题，会造成传统UDP包发送无法被程序接收。此处列出一种可以重放保存的UDP pcap包的方法。  安装bittwist, 此工具能够修改pcap包，其他修改pcap包的工具（如NetDude）也能用，但是此处我们使用bittwist处理  获取需要接收UDP的机器的IP地址，此处我们用本机地址。输入ip address命令, 我们需">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Ubuntu安装 Realtek R8125&#x2F;R8168 驱动">
-<meta property="og:url" content="https://yeluolei.github.io/2020/03/07/Ubuntu%E5%AE%89%E8%A3%85-Realtek-R8125-R8168-%E9%A9%B1%E5%8A%A8/index.html">
+<meta property="og:title" content="Ubuntu udp replay pcap package">
+<meta property="og:url" content="https://yeluolei.github.io/2020/03/28/Ubuntu-udp-replay-pcap-package/index.html">
 <meta property="og:site_name" content="YaLso">
-<meta property="og:description" content="如今网卡更新的速度已经超过操作系统的更新速度了，特别是开源操作系统，默认的网卡驱动动不动就跟不上新的主板，导致新的电脑无法识别到网卡，特别闹心。比如最近配置的Z390 Phantom Gaming SLI&#x2F;ac这个主板，在ubuntu 18.04上，就是安装了ubuntu-18.04-hwe-generic，也没有找到对应的驱动程序，这个时候就需要手动安装了。在官网上下载好对应的驱动,注意我们是2">
+<meta property="og:description" content="在日常工作中，需要对抓包后的数据在调试时重放。由于UDP头限定等问题，会造成传统UDP包发送无法被程序接收。此处列出一种可以重放保存的UDP pcap包的方法。  安装bittwist, 此工具能够修改pcap包，其他修改pcap包的工具（如NetDude）也能用，但是此处我们使用bittwist处理  获取需要接收UDP的机器的IP地址，此处我们用本机地址。输入ip address命令, 我们需">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-03-06T16:31:28.000Z">
-<meta property="article:modified_time" content="2020-03-08T07:17:51.937Z">
+<meta property="article:published_time" content="2020-03-28T12:10:46.000Z">
+<meta property="article:modified_time" content="2020-03-28T13:15:22.599Z">
 <meta property="article:author" content="Rurui Ye">
-<meta property="article:tag" content="ubuntu, driver">
+<meta property="article:tag" content="Ubuntu,udp,pcap">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="https://yeluolei.github.io/2020/03/07/Ubuntu%E5%AE%89%E8%A3%85-Realtek-R8125-R8168-%E9%A9%B1%E5%8A%A8/">
+<link rel="canonical" href="https://yeluolei.github.io/2020/03/28/Ubuntu-udp-replay-pcap-package/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>Ubuntu安装 Realtek R8125/R8168 驱动 | YaLso</title>
+  <title>Ubuntu udp replay pcap package | YaLso</title>
   
 
 
@@ -147,7 +147,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://yeluolei.github.io/2020/03/07/Ubuntu%E5%AE%89%E8%A3%85-Realtek-R8125-R8168-%E9%A9%B1%E5%8A%A8/">
+    <link itemprop="mainEntityOfPage" href="https://yeluolei.github.io/2020/03/28/Ubuntu-udp-replay-pcap-package/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -160,7 +160,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Ubuntu安装 Realtek R8125/R8168 驱动
+          Ubuntu udp replay pcap package
         </h1>
 
         <div class="post-meta">
@@ -169,16 +169,10 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-03-07 00:31:28" itemprop="dateCreated datePublished" datetime="2020-03-07T00:31:28+08:00">2020-03-07</time>
+              <time title="创建时间：2020-03-28 20:10:46 / 修改时间：21:15:22" itemprop="dateCreated datePublished" datetime="2020-03-28T20:10:46+08:00">2020-03-28</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-08 15:17:51" itemprop="dateModified" datetime="2020-03-08T15:17:51+08:00">2020-03-08</time>
-              </span>
 
           
 
@@ -191,21 +185,22 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>如今网卡更新的速度已经超过操作系统的更新速度了，特别是开源操作系统，默认的网卡驱动动不动就跟不上新的主板，导致新的电脑无法识别到网卡，特别闹心。比如最近配置的<code>Z390 Phantom Gaming SLI/ac</code>这个主板，在ubuntu 18.04上，就是安装了<code>ubuntu-18.04-hwe-generic</code>，也没有找到对应的驱动程序，这个时候就需要手动安装了。在<a href="https://www.realtek.com/en/component/zoo/category/network-interface-controllers-10-100-1000m-gigabit-ethernet-pci-express-software" target="_blank" rel="noopener">官网</a>上下载好对应的驱动,注意我们是<code>2.5G Ethernet LINUX driver r8125 for kernel up to 4.15</code>的版本，不要下错了。如果是1G网卡，则对应<code>GBE Ethernet LINUX driver r8168 for kernel up to 4.15</code>版本。</p>
-<p>下载好之后，当前版本是<code>r8125-9.003.02.tar.bz2</code>。里面有README文件，如果按照README安装，当时能够使用，但是重启或者升级内核版本之后，就失效了。所以还需要手动处理下。</p>
-<ul>
-<li><p>准备编译环境</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install --reinstall linux-headers-$(uname -r) linux-headers-generic build-essential dkms</span><br></pre></td></tr></table></figure></li>
-<li><p>解压对应的源码到<code>/usr/src</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo tar xvf r8125-9.003.02.tar.bz2 -C &#x2F;usr&#x2F;src</span><br></pre></td></tr></table></figure></li>
-<li><p>添加一个<code>dkms.conf</code>到<code>/usr/src/8125-9.003.02/dkms.conf</code>，内容如下</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">PACKAGE_NAME&#x3D;Realtek_r8125</span><br><span class="line">PACKAGE_VERSION&#x3D;9.003.02</span><br><span class="line"></span><br><span class="line">DEST_MODULE_LOCATION&#x3D;&#x2F;updates&#x2F;dkms</span><br><span class="line">BUILT_MODULE_NAME&#x3D;r8125</span><br><span class="line">BUILT_MODULE_LOCATION&#x3D;src&#x2F;</span><br><span class="line"></span><br><span class="line">MAKE&#x3D;&quot;&#39;make&#39; -C src&#x2F; all&quot;</span><br><span class="line">CLEAN&#x3D;&quot;&#39;make&#39; -C src&#x2F; clean&quot;</span><br><span class="line">AUTOINSTALL&#x3D;&quot;yes&quot;</span><br></pre></td></tr></table></figure></li>
-<li><p>编译DKMS</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo dkms add -m r8125 -v 9.003.02</span><br><span class="line">sudo dkms build -m r8125 -v 9.003.02</span><br><span class="line">sudo dkms install -m r8125 -v 9.003.02</span><br><span class="line">sudo depmod -a</span><br><span class="line">sudo modprobe r8125</span><br></pre></td></tr></table></figure>
+        <p>在日常工作中，需要对抓包后的数据在调试时重放。由于UDP头限定等问题，会造成传统UDP包发送无法被程序接收。此处列出一种可以重放保存的UDP pcap包的方法。</p>
+<ol>
+<li><p>安装<code>bittwist</code>, <a href="http://bittwist.sourceforge.net/doc.html" target="_blank" rel="noopener">此工具</a>能够修改pcap包，其他修改pcap包的工具（如NetDude）也能用，但是此处我们使用<code>bittwist</code>处理</p>
 </li>
-<li><p>验证安装结果, 运行如下命令即可看到<code>enxxx</code>的有线网接口</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig -a</span><br></pre></td></tr></table></figure></li>
-</ul>
+<li><p>获取需要接收UDP的机器的IP地址，此处我们用本机地址。输入<code>ip address</code>命令, 我们需要IP地址和mac地址，此处为<code>192.168.1.106</code>和<code>9c:b6:d0:bf:1f:8b</code></p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">2: wlp59s0: &lt;BROADCAST,MULTICAST,UP,LOWER_UP&gt; mtu 1500 qdisc noqueue state UP group default qlen 1000</span><br><span class="line">  link&#x2F;ether 9c:b6:d0:bf:1f:8b brd ff:ff:ff:ff:ff:ff</span><br><span class="line">  inet 192.168.1.106&#x2F;24 brd 192.168.1.255 scope global dynamic noprefixroute wlp59s0</span><br><span class="line">    valid_lft 4881sec preferred_lft 4881sec</span><br><span class="line">  inet6 fe80::bd4a:cb93:1b2e:2ca0&#x2F;64 scope link noprefixroute</span><br><span class="line">    valid_lft forever preferred_lft forever</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用<code>bittwiste</code>修改pcap包， 如果不修改，导致验证不一致，UDP包会被丢弃</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"># 修改为接收放端口</span><br><span class="line">bittwiste -I 0316.pcap -O 0316-port.pcap -T udp -d 3002</span><br><span class="line"># 修改发送方和接收方IP</span><br><span class="line">bittwiste -I 0316-port.pcap -O 0316-port-ip.pcap -T ip -s 192.168.1.106 -d 192.168.1.106</span><br><span class="line"># 修改发送方和接收方MAC地址</span><br><span class="line">bittwiste -I 0316-port-ip.pcap -O 0316-port-ip-mac.pcap -T eth -s 9c:b6:d0:bf:1f:8b -d 9c:b6:d0:bf:1f:8b</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>发送UDP包，此处我们使用<a href="https://github.com/rigtorp/udpreplay" target="_blank" rel="noopener">github</a>上的一个开源工具<code>udpreplay</code></p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">udpreplay -i wlp59s0 0316-new-ip2-mac.pcap</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>至此UDP包能够在接收方Linux程序收到消息了。</p>
 
     </div>
 
@@ -215,7 +210,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/ubuntu-driver/" rel="tag"># ubuntu, driver</a>
+              <a href="/tags/Ubuntu-udp-pcap/" rel="tag"># Ubuntu,udp,pcap</a>
           </div>
 
         
@@ -224,13 +219,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2017/03/21/gitbook%E5%A6%82%E4%BD%95%E6%8C%89%E5%8F%82%E6%95%B0%E7%BC%96%E8%AF%91%E5%86%85%E5%AE%B9/" rel="prev" title="gitbook如何按参数编译内容">
-      <i class="fa fa-chevron-left"></i> gitbook如何按参数编译内容
+    <a href="/2020/03/07/Ubuntu%E5%AE%89%E8%A3%85-Realtek-R8125-R8168-%E9%A9%B1%E5%8A%A8/" rel="prev" title="Ubuntu安装 Realtek R8125/R8168 驱动">
+      <i class="fa fa-chevron-left"></i> Ubuntu安装 Realtek R8125/R8168 驱动
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/03/28/Ubuntu-udp-replay-pcap-package/" rel="next" title="Ubuntu udp replay pcap package">
-      Ubuntu udp replay pcap package <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
